@@ -80,3 +80,40 @@ func TestTop10(t *testing.T) {
 		}
 	})
 }
+
+func TestTop10Cases(t *testing.T) {
+	tests := []struct {
+		desc     string
+		input    string
+		expected []string
+	}{
+		{
+			desc:     "less then 10 words",
+			input:    "Мама мыла раму",
+			expected: []string{"Мама", "мыла", "раму"},
+		},
+		{
+			desc:     "correct order if counts are same for less then 10 words",
+			input:    "раму мыла Мама",
+			expected: []string{"Мама", "мыла", "раму"},
+		},
+		{
+			desc:     "correct order if counts differ for less then 10 words",
+			input:    "Мама раму мыла мыла",
+			expected: []string{"мыла", "Мама", "раму"},
+		},
+		{
+			desc:     "trim only 10 words",
+			input:    "Z Y X A B C K L M O P R Q S",
+			expected: []string{"A", "B", "C", "K", "L", "M", "O", "P", "Q", "R"},
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.desc, func(t *testing.T) {
+			result := Top10(tc.input)
+			require.Equal(t, tc.expected, result)
+		})
+	}
+}
