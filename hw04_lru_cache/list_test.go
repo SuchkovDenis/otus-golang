@@ -49,3 +49,55 @@ func TestList(t *testing.T) {
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
 	})
 }
+
+func TestListRemove(t *testing.T) {
+	// Удаляем единственный первый элемент
+	l := NewList()
+	l.PushFront(1)
+	l.Remove(l.Front())
+	require.Nil(t, l.Front())
+	require.Nil(t, l.Back())
+	require.Equal(t, l.Len(), 0)
+
+	// Удаляем последний элемент
+	l = NewList()
+	l.PushBack(1)
+	l.PushBack(2)
+	l.Remove(l.Back())
+	require.Equal(t, l.Front().Value, 1)
+	require.Equal(t, l.Front(), l.Back())
+	require.Equal(t, l.Len(), 1)
+
+	// Удаляем элемент посередине
+	l = NewList()
+	l.PushBack(1)
+	l.PushBack(2)
+	l.PushBack(3)
+	l.Remove(l.Front().Next)
+	require.Equal(t, l.Front().Value, 1)
+	require.Equal(t, l.Back().Value, 3)
+	require.Equal(t, l.Front().Next, l.Back())
+	require.Equal(t, l.Back().Prev, l.Front())
+	require.Equal(t, l.Len(), 2)
+}
+
+func TestListMoveToFront(t *testing.T) {
+	// Перемещаем первый элемент
+	l := NewList()
+	l.PushBack(1)
+	l.PushBack(2)
+	l.MoveToFront(l.Front())
+	require.Equal(t, 2, l.Len())
+	require.Equal(t, l.Front().Value, 1)
+	require.Equal(t, l.Back().Value, 2)
+	require.Equal(t, l.Front().Next, l.Back())
+	require.Equal(t, l.Back().Prev, l.Front())
+
+	// Перемещаем последний элемент
+	l.MoveToFront(l.Back())
+	require.Equal(t, 2, l.Len())
+	require.Equal(t, l.Front().Value, 2)
+	require.Equal(t, l.Back().Value, 1)
+	require.Equal(t, l.Front().Next, l.Back())
+	require.Equal(t, l.Back().Prev, l.Front())
+}
