@@ -68,3 +68,16 @@ func TestRun(t *testing.T) {
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
 }
+
+func TestNegativeMaxErrorsNumber(t *testing.T) {
+	require.Equal(t, ErrErrorsLimitExceeded, Run([]Task{}, 1, -1))
+}
+
+func TestNumberTasksLessThenWorkersCount(t *testing.T) {
+	tasks := []Task{
+		func() error {
+			return nil
+		},
+	}
+	require.Nil(t, Run(tasks, 10, 1))
+}
