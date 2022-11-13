@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	progressbar "github.com/schollz/progressbar/v3"
+	pb "github.com/cheggaaa/pb/v3"
 )
 
 const chunkSize = 1024
@@ -43,7 +43,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		limit = fileSize - offset
 	}
 
-	bar := progressbar.Default(limit)
+	bar := pb.StartNew(int(limit))
 	buff := make([]byte, chunkSize)
 	for limit > 0 {
 		readBytes, err := inFile.ReadAt(buff, offset)
@@ -62,16 +62,8 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 		limit -= int64(readBytes)
 		offset += int64(chunkSize)
-
-		err = bar.Add(writeBytes)
-		if err != nil {
-			return err
-		}
+		bar.Add(writeBytes)
 	}
-	err = outFile.Chmod(stat.Mode().Perm())
-	if err != nil {
-		return err
-	}
-
-	return nil
+	bar.Finish()
+	return outFile.Chmod(stat.Mode().Perm())
 }

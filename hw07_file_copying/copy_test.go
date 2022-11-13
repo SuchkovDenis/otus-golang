@@ -60,6 +60,19 @@ func TestCopy(t *testing.T) {
 
 		removeTestFiles(t, inputFile, outFile)
 	})
+
+	t.Run("Write all file offset exceeded", func(t *testing.T) {
+		inputFile := "test_data_input4.txt"
+		outFile := "test_data_out4.txt"
+		testData := []byte("Test data")
+
+		prepareTestFiles(t, inputFile, testData)
+
+		err := Copy(inputFile, outFile, 100, 0)
+		require.Equal(t, ErrOffsetExceedsFileSize, err)
+
+		removeTestFiles(t, inputFile)
+	})
 }
 
 func prepareTestFiles(t *testing.T, inputFile string, testData []byte) {
@@ -68,12 +81,12 @@ func prepareTestFiles(t *testing.T, inputFile string, testData []byte) {
 	require.NoError(t, err)
 }
 
-func removeTestFiles(t *testing.T, inputFile, outFile string) {
+func removeTestFiles(t *testing.T, files ...string) {
 	t.Helper()
-	err := os.Remove(inputFile)
-	require.NoError(t, err)
-	err = os.Remove(outFile)
-	require.NoError(t, err)
+	for _, file := range files {
+		err := os.Remove(file)
+		require.NoError(t, err)
+	}
 }
 
 func assertData(t *testing.T, outFile string, expectedData []byte) {
