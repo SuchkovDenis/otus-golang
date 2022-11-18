@@ -1,7 +1,10 @@
 package main
 
 import (
+	"errors"
 	"flag"
+	"fmt"
+	"os"
 )
 
 var (
@@ -18,5 +21,29 @@ func init() {
 
 func main() {
 	flag.Parse()
-	// Place your code here.
+
+	if err := validateInput(from, to, limit, offset); err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	if err := Copy(from, to, offset, limit); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func validateInput(from, to string, limit, offset int64) error {
+	if from == "" {
+		return errors.New("--from arg is required")
+	}
+	if to == "" {
+		return errors.New("--to arg is required")
+	}
+	if limit < 0 {
+		return errors.New("--limit illegal arg: must be not negative")
+	}
+	if offset < 0 {
+		return errors.New("--offset illegal arg: must be not negative")
+	}
+	return nil
 }
