@@ -33,6 +33,8 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	execCommand := cmd[0]
 	command := exec.Command(execCommand, cmd[1:]...)
 	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	command.Stdin = os.Stdin
 
 	if err := command.Run(); err != nil {
 		var exitError *exec.ExitError
