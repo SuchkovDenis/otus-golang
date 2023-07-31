@@ -1,9 +1,11 @@
+//go:build !bench
 // +build !bench
 
 package hw10programoptimization
 
 import (
 	"bytes"
+	"github.com/mailru/easyjson/jlexer"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -36,4 +38,17 @@ func TestGetDomainStat(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, DomainStat{}, result)
 	})
+}
+
+func TestGetDomainStatInvalidJson(t *testing.T) {
+	data := `{"Email":"aliquid_qui_ea@Browsedrive.gov","Phone":"6-866-`
+
+	result, err := GetDomainStat(bytes.NewBufferString(data), "com")
+
+	require.Equal(t, err, &jlexer.LexerError{
+		Reason: "unterminated string literal",
+		Offset: 57,
+		Data:   "{\"Email\":\"aliquid_qui_ea@Browsedrive.gov\",\"Phone\":\"6-866-",
+	})
+	require.Equal(t, DomainStat{}, result)
 }
